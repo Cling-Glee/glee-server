@@ -1,0 +1,4 @@
+rootProject.name = 'glee'
+include 'glee-interfaces'
+include 'glee-domain'
+
