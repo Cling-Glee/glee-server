@@ -1,5 +1,6 @@
 package com.cling.glee.domain.service.query.impl;
 
+import com.cling.glee.domain.entity.BlockUser;
 import com.cling.glee.domain.entity.User;
 import com.cling.glee.domain.repository.UserRepository;
 import org.junit.jupiter.api.Test;
