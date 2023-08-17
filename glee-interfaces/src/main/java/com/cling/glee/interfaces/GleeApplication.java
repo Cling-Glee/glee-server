@@ -1,6 +1,6 @@
 package com.cling.glee.interfaces;
 
-import com.cling.glee.domain.GleeDomainApplication;
+import com.cling.glee.GleeDomainApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
