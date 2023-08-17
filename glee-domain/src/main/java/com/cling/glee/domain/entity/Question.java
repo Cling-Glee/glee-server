@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "questions")
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Question {
 	@Id
 	@GeneratedValue

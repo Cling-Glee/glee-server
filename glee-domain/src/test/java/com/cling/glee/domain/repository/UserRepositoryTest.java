@@ -1,6 +1,7 @@
 package com.cling.glee.domain.repository;
 
 import com.cling.glee.domain.entity.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ public class UserRepositoryTest {
 	@Autowired UserRepository userRepository;
 
 	@Test
+	@DisplayName("유저 저장")
 	public void userSave() throws Exception {
 		//given
 		User user = User.builder()

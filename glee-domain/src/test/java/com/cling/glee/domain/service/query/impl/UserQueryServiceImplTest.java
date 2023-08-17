@@ -3,6 +3,7 @@ package com.cling.glee.domain.service.query.impl;
 import com.cling.glee.domain.entity.BlockUser;
 import com.cling.glee.domain.entity.User;
 import com.cling.glee.domain.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ class UserQueryServiceImplTest {
 	private UserRepository userRepository;
 
 	@Test
+	@DisplayName("유저 한 명 가져오기")
 	void getUser() {
 		// given
 		User savedUser = userRepository.save(User.builder().build());
@@ -33,6 +35,7 @@ class UserQueryServiceImplTest {
 	}
 
 	@Test
+	@DisplayName("유저 전체 가져오기")
 	void getUsers() {
 		// given
 

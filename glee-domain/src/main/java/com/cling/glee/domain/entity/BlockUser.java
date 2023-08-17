@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "block_users")
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class BlockUser {
 
 	@Id
@@ -20,12 +20,12 @@ public class BlockUser {
 
 	// 연관관계 주인
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	// 연관관계 주인
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "block_user_id")
 	private User blockUser;
 
 	/* === 연관관계 편의메서드 === */
