@@ -39,4 +39,8 @@ out/
 ### application.properties
 **/application.properties
 **/application.yml
-**/application.yaml
+**/application-dev.yml
+**/application-prod.yml
+
+### env
+.env.*
