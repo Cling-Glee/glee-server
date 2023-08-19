@@ -1,6 +1,7 @@
 package com.cling.glee.domain.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CollectionId;
 
 import javax.persistence.*;
 
@@ -13,8 +14,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Question {
+
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -25,8 +28,16 @@ public class Question {
 	@JoinColumn(name = "answer_user_id")
 	private User answerUser; // 답변한 유저
 
+	@Column(nullable = false, length = 1000)
 	private String questionContent;
-	private boolean isNickNameExposed;
-	private boolean isHided;
-	private boolean isDeleted;
+
+	@Column(nullable = false)
+	private Boolean isNickNameExposed;
+
+	@Column(nullable = false)
+	private Boolean isHided;
+
+	@Column(nullable = false)
+	private Boolean isDeleted;
+
 }
