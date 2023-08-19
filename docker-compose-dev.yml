@@ -4,7 +4,7 @@ services:
     image: mysql
     container_name: spring-db
     env_file:
-      - .env.local
+      - .env.dev
     ports:
       - "3307:3306"
     volumes:
@@ -20,3 +20,7 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       - db
+#    volumes:
+#      - ./wait-for-it.sh:/app/wait-for-it.sh
+#    command:
+#      - sh -c "/app/wait-for-it.sh db:3306 -t 60 -- java -jar /app/app.jar"

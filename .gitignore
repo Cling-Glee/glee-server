@@ -43,4 +43,4 @@ out/
 **/application-prod.yml
 
 ### env
-.env.*
+.env.dev
