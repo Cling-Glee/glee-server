@@ -1,0 +1,11 @@
+version : "3.7"
+services:
+  spring-rest-api:
+    container_name: spring-rest-api
+    build:
+      context: ./glee-interfaces
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
