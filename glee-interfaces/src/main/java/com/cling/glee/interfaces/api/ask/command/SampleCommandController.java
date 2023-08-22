@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RequestMapping("/api/sample")
+@RequestMapping("/api/sample")
 public class SampleCommandController {
 
 

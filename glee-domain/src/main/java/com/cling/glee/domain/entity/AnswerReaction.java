@@ -1,5 +1,6 @@
 package com.cling.glee.domain.entity;
 
+import com.cling.glee.domain.entity.base.BaseTimeEntity;
 import com.cling.glee.domain.entity.enums.ReactionTypeEnum;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerReaction {
+public class AnswerReaction extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
