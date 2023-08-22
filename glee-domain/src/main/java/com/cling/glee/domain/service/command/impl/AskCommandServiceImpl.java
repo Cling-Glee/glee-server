@@ -7,9 +7,12 @@ import com.cling.glee.domain.repository.QuestionRepository;
 import com.cling.glee.domain.repository.UserRepository;
 import com.cling.glee.domain.service.command.AskCommandService;
 import com.cling.glee.domain.service.vo.QuestionCreateVO;
+import com.cling.glee.domain.service.vo.QuestionUpdateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -53,8 +56,26 @@ public class AskCommandServiceImpl implements AskCommandService {
     }
 
     @Override
-    public void updateQuestion() {
+    public void updateQuestion(QuestionUpdateVO questionUpdateVO) {
+        Optional<Question> question = questionRepository.findById(questionUpdateVO.getQuestionId());
+        if(question.isPresent()){
+            Question updateQuestion = question.get();
+            if(questionUpdateVO.getType().equals("HIDE")){
+                // 질문 숨기기
+                updateQuestion.setIsHided(questionUpdateVO.getIsActivated());
+                questionRepository.save(updateQuestion);
+            } else if(questionUpdateVO.getType().equals("FIXED")) {
+                // 질문 상단 고정
+                User user = userRepository.findByProviderId(questionUpdateVO.getUserId());
 
+                if(questionUpdateVO.getIsActivated()){
+                    user.setTopFixedQuestionId(questionUpdateVO.getQuestionId());
+                } else {
+                    user.setTopFixedQuestionId(null);
+                }
+                userRepository.save(user);
+            }
+        }
     }
 
     @Override

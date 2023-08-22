@@ -2,6 +2,7 @@ package com.cling.glee.interfaces.api.ask.command;
 
 import com.cling.glee.domain.service.command.AskCommandService;
 import com.cling.glee.domain.service.vo.QuestionCreateVO;
+import com.cling.glee.domain.service.vo.QuestionUpdateVO;
 import com.cling.glee.interfaces.api.ask.command.dto.QuestionCreateCommandDTO;
 import com.cling.glee.interfaces.api.ask.command.dto.QuestionDeleteCommandDTO;
 import com.cling.glee.interfaces.api.ask.command.dto.QuestionUpdateCommandDTO;
@@ -35,7 +36,12 @@ public class MemberQuestionCommandController {
     // 질문 수정
     @PostMapping("/update")
     public void questionUpdate(@RequestBody QuestionUpdateCommandDTO questionUpdateCommandDTO){
-
+        askCommandService.updateQuestion(QuestionUpdateVO.builder()
+                        .type(questionUpdateCommandDTO.getType())
+                        .questionId(questionUpdateCommandDTO.getQuestionId())
+                        .isActivated(questionUpdateCommandDTO.getIsActivated())
+                        .userId(questionUpdateCommandDTO.getUserId())
+                .build());
     }
 
     // 질문 삭제
