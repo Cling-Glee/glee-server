@@ -2,11 +2,11 @@ package com.cling.glee.domain.entity;
 
 import com.cling.glee.domain.entity.base.BaseTimeEntity;
 import com.cling.glee.domain.entity.enums.ProviderType;
+import com.cling.glee.domain.entity.enums.Role;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -22,7 +22,7 @@ public class User extends BaseTimeEntity {
 	@GeneratedValue
 	private Long id;
 
-	private String username;
+	private String name;
 	private int age;
 
 	@Enumerated(EnumType.STRING)
@@ -49,6 +49,11 @@ public class User extends BaseTimeEntity {
 
 	// 상단고정질문 (FK 세팅 안 함)
 	private Long topFixedQuestionId;
+
+	// 유저 권한
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
 
 	/* == 양방향 연관관계 == */
 
@@ -86,5 +91,17 @@ public class User extends BaseTimeEntity {
 	public void removeQuestion(Question question) {
 		question.setAskUser(null);
 		question.setAnswerUser(null);
+	}
+
+	/* == 비즈니스 로직 == */
+	public User update(String name, String profileImage) {
+		this.name = name;
+		this.profileImage = profileImage;
+
+		return this;
+	}
+
+	public String getRoleKey() {
+		return this.role.getKey();
 	}
 }
