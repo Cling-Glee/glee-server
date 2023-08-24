@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/glee_local?serverTimezone=Asia/Seoul
@@ -22,7 +24,7 @@ spring:
             client-secret: vrguGOWawmzOCXAhDlZ3UZqjWTvRYlhu
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             authorization-grant-type: authorization_code
-#            scope: profile_nickname,account_email,profile_image,gender,age_range
+            #            scope: profile_nickname,account_email,profile_image,gender,age_range
             client-name: Kakao
         provider:
           kakao:
@@ -31,5 +33,12 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+#  jackson:
+#    deserialization:
+#      fail-on-ignored-properties: false
 
-
+jwt:
+  secret: 4lkjsdf84kvcdf14jzdsafjkdlsfdskfjsdognepopgoerignodnvofdgnoernp
+  expiration: 86400 # 24 hours (임시)
+  token-prefix: "Bearer "
+  header-string: Authorization

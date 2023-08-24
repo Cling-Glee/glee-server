@@ -2,6 +2,7 @@ package com.cling.glee.auth;
 
 import com.cling.glee.auth.vo.OAuthTokenVo;
 import com.cling.glee.auth.vo.user.KakaoUser;
+import com.cling.glee.auth.vo.user.KakaoUser2;
 import com.cling.glee.auth.vo.user.OAuthUser;
 import com.cling.glee.domain.entity.User;
 import com.cling.glee.domain.entity.enums.Role;
@@ -85,7 +86,7 @@ public class OAuthService {
 	}
 
 	// access token을 통해 카카오 사용자 정보를 가져온다
-	public KakaoUser getKakaoUser(String token) {
+	public KakaoUser2 getKakaoUser(String token) {
 		RestTemplate rt = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -106,10 +107,10 @@ public class OAuthService {
 
 		// json -> Object
 		ObjectMapper objectMapper = new ObjectMapper();
-		KakaoUser kakaoUser = null;
+		KakaoUser2 kakaoUser = null;
 
 		try {
-			kakaoUser = objectMapper.readValue(kakaoUserResponse.getBody(), KakaoUser.class);
+			kakaoUser = objectMapper.readValue(kakaoUserResponse.getBody(), KakaoUser2.class);
 		} catch (Exception e) {
 			// UnrecognizedPropertyException 예외처리 해주기
 			e.printStackTrace();

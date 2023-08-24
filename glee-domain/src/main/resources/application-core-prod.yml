@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://glee-database.clutkqhd6qzv.ap-northeast-2.rds.amazonaws.com:3306/glee_dev?serverTimezone=Asia/Seoul

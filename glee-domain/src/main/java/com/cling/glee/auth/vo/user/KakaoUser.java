@@ -17,7 +17,7 @@ public class KakaoUser implements OAuthUser {
 		this.attributes = attributes;
 	}
 
-	public Map<String, Object> getKakaoAccount(){
+	public Map<String, Object> getKakaoAccount() {
 		return (Map<String, Object>) attributes.get("kakao_account");
 	}
 
@@ -28,11 +28,6 @@ public class KakaoUser implements OAuthUser {
 	public Map<String, Object> getProfile() {
 		Map<String, Object> kakaoAccount = getKakaoAccount();
 		return (Map<String, Object>) kakaoAccount.get("profile");
-	}
-
-	@Override
-	public Map<String, Object> getAttributes() {
-		return attributes;
 	}
 
 	@Override
@@ -58,5 +53,8 @@ public class KakaoUser implements OAuthUser {
 	@Override
 	public String getProfileImage() {
 		return (String) getProfile().get("profile_image_url");
+
+
+		// return (String) ((Map<String, Object>) ((Map<String, Object>) attributes.get("kakao_account")).get("profile")).get("profile_image_url");
 	}
 }
