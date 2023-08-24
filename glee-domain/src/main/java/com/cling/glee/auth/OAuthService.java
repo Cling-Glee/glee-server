@@ -1,7 +1,10 @@
 package com.cling.glee.auth;
 
 import com.cling.glee.auth.vo.OAuthTokenVo;
-import com.cling.glee.auth.vo.user.KakaoUserVo;
+import com.cling.glee.auth.vo.user.KakaoUser;
+import com.cling.glee.auth.vo.user.OAuthUser;
+import com.cling.glee.domain.entity.User;
+import com.cling.glee.domain.entity.enums.Role;
 import com.cling.glee.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +19,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 @Service
-@Transactional(readOnly = true) // 읽기전용 트랜잭션
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class OAuthService {
@@ -80,7 +85,7 @@ public class OAuthService {
 	}
 
 	// access token을 통해 카카오 사용자 정보를 가져온다
-	public KakaoUserVo getKakaoUser(String token) {
+	public KakaoUser getKakaoUser(String token) {
 		RestTemplate rt = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -97,14 +102,14 @@ public class OAuthService {
 				String.class
 		);
 
-		log.info("kakaoProfileResponse : {}", kakaoUserResponse);
+		log.info("kakaoUserResponse : {}", kakaoUserResponse);
 
 		// json -> Object
 		ObjectMapper objectMapper = new ObjectMapper();
-		KakaoUserVo kakaoUser = null;
+		KakaoUser kakaoUser = null;
 
 		try {
-			kakaoUser = objectMapper.readValue(kakaoUserResponse.getBody(), KakaoUserVo.class);
+			kakaoUser = objectMapper.readValue(kakaoUserResponse.getBody(), KakaoUser.class);
 		} catch (Exception e) {
 			// UnrecognizedPropertyException 예외처리 해주기
 			e.printStackTrace();
@@ -113,5 +118,23 @@ public class OAuthService {
 		log.info("kakaoUser : {}", kakaoUser);
 
 		return kakaoUser;
+	}
+
+	public Optional<User> getUser(OAuthUser oAuthUser) {
+		return userRepository.findByEmailAndProviderType(oAuthUser.getEmail(), oAuthUser.getProviderType());
+	}
+
+	public Optional<User> saveUser(OAuthUser oAuthUser) {
+		User newUser = User.builder()
+				.email(oAuthUser.getEmail())
+				.nickname(oAuthUser.getNickname())
+				.providerType(oAuthUser.getProviderType())
+				.providerId(oAuthUser.getProviderId())
+				.role(Role.USER)
+				.profileImage(oAuthUser.getProfileImage())
+				.isJoinCompleted(true)
+				.build();
+
+		return Optional.of(userRepository.save(newUser));
 	}
 }
