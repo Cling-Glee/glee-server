@@ -38,11 +38,15 @@ subprojects {
         implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.0'
 
         implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
         // jwt
         implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
         runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
         runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+        // webflux
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 
     }

@@ -1,4 +1,4 @@
-package com.cling.glee.auth.vo.user;
+package com.cling.glee.auth.userinfo;
 
 import com.cling.glee.domain.entity.enums.ProviderType;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -7,13 +7,13 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public class KakaoUser implements OAuthUser {
+public class KakaoUserInfo implements OAuth2UserInfo {
 
 	public Map<String, Object> attributes;
 	public Map<String, Object> properties;
 
 	@JsonCreator
-	public KakaoUser(Map<String, Object> attributes) {
+	public KakaoUserInfo(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 

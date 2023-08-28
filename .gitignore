@@ -38,7 +38,12 @@ out/
 
 ### application.properties
 **/application.properties
-**/application.yml
+
+**/application-core-local.yml
+**/application-core-dev.yml
+**/application-core-prod.yml
+
+**/application-local.yml
 **/application-dev.yml
 **/application-prod.yml
 

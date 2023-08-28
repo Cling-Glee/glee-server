@@ -7,18 +7,12 @@ import org.springframework.web.bind.annotation.*;
 public class SampleCommandController {
 
 
-	@Value("${spring.jpa.open-in-view}")
-	private String openInView;
-
-	@Value("${jwt.secret}")
-	private String secret;
-
-
 	@GetMapping("/hello")
 	public String hello() {
-		return "hello from " + " secret: " + secret;
+		return "hello";
 	}
 
+	// oauth 리다이렉션용 임시 엔드포인트
 	@GetMapping("/login/oauth2/code/kakao")
 	public String checkCode() {
 		return "code";
