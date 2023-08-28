@@ -50,7 +50,7 @@ public class OAuthCommandController {
 
 
 			// 사용자 정보를 통해 JWT 토큰을 발급
-			String token = jwtProvider.createJwtToken(findUser.get());
+			String token = jwtProvider.createAccessToken(findUser.get());
 
 			log.info("token : {}", token);
 
