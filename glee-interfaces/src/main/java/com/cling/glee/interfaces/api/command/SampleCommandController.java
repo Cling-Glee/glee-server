@@ -1,7 +1,7 @@
 package com.cling.glee.interfaces.api.command;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +14,8 @@ public class SampleCommandController {
 		return "hello";
 	}
 
-	@ApiOperation(value = "Private endpoint with JWT authorization", authorizations = @Authorization("Bearer"))
 	@GetMapping("/api/auth")
+	@SecurityRequirement(name = "Authorization") // 인증 필요한 엔드포인트에 설정
 	public String test() {
 		return "security test";
 	}
