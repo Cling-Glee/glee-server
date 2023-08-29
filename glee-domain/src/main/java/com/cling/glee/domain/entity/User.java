@@ -2,11 +2,12 @@ package com.cling.glee.domain.entity;
 
 import com.cling.glee.domain.entity.base.BaseTimeEntity;
 import com.cling.glee.domain.entity.enums.ProviderType;
+import com.cling.glee.domain.entity.enums.Role;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -22,33 +23,41 @@ public class User extends BaseTimeEntity {
 	@GeneratedValue
 	private Long id;
 
-	private String username;
+	// 닉네임
+	@Column(nullable = false)
+	private String nickname;
+
 	private int age;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private ProviderType providerType; // KAKAO, TWITTER, INSTAGRAM, APPLE
 
 	private String providerId; // 각 소셜 로그인 서비스에서 제공하는 고유 아이디
 
+	@Column(nullable = false)
 	private String email;
 
 	// 리프레시 토큰
 	private String refreshToken;
 
-	// 닉네임
-	private String nickname;
-
 	// 프로필 사진
 	private String profileImage;
 
-	// 회원가입 완료 여부
+	// 회원가입 완료 여부 => 필요한가?
 	private boolean isJoinCompleted;
 
 	// 회원탈퇴 여부
+	@ColumnDefault("false")
 	private boolean isWithdrawal;
 
 	// 상단고정질문 (FK 세팅 안 함)
 	private Long topFixedQuestionId;
+
+	// 유저 권한
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
 
 	/* == 양방향 연관관계 == */
 
@@ -86,5 +95,17 @@ public class User extends BaseTimeEntity {
 	public void removeQuestion(Question question) {
 		question.setAskUser(null);
 		question.setAnswerUser(null);
+	}
+
+	/* == 비즈니스 로직 == */
+	public User update(String nickname, String profileImage) {
+		this.nickname = nickname;
+		this.profileImage = profileImage;
+
+		return this;
+	}
+
+	public String getRoleKey() {
+		return this.role.getKey();
 	}
 }
