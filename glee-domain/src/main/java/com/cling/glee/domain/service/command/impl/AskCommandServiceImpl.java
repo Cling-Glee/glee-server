@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -27,31 +28,34 @@ public class AskCommandServiceImpl implements AskCommandService {
 
     @Override
     public void registerQuestion(QuestionCreateVO questionCreateVO){
-        User AnswerUser = userRepository.findByProviderId(questionCreateVO.getAnswerUser());
-
-        if(questionCreateVO.getIsMember()){
-            // 회원 질문일 경우
-            User QuestionUser = userRepository.findByProviderId(questionCreateVO.getQuestionUser());
-            questionRepository.save(Question.builder()
-                            .answerUser(AnswerUser)
-                            .askUser(QuestionUser)
+        Optional<User> answerUser = userRepository.findById(questionCreateVO.getAnswerUserId());
+        if(answerUser.isPresent()){
+            if(questionCreateVO.getIsMember()){
+                // 회원 질문일 경우
+                Optional<User> questionUser = userRepository.findById(questionCreateVO.getQuestionUserId());
+                if(questionUser.isPresent()){
+                    questionRepository.save(Question.builder()
+                            .answerUser(answerUser.get())
+                            .askUser(questionUser.get())
                             .isNickNameExposed(questionCreateVO.getIsNickNameExposed())
                             .questionContent(questionCreateVO.getQuestionContent())
                             .isHided(false)
                             .isDeleted(false)
                             .isMember(true)
-                    .build());
-
-        } else {
-            // 비회원 질문일 경우
-            questionRepository.save(Question.builder()
-                    .answerUser(AnswerUser)
-                    .isNickNameExposed(questionCreateVO.getIsNickNameExposed())
-                    .questionContent(questionCreateVO.getQuestionContent())
-                    .isHided(false)
-                    .isDeleted(false)
-                    .isMember(false)
-                    .build());
+                            .build());
+                }
+            }
+            else if (!questionCreateVO.getIsMember()){
+                // 비회원 질문일 경우
+                questionRepository.save(Question.builder()
+                        .answerUser(answerUser.get())
+                        .isNickNameExposed(questionCreateVO.getIsNickNameExposed())
+                        .questionContent(questionCreateVO.getQuestionContent())
+                        .isHided(false)
+                        .isDeleted(false)
+                        .isMember(false)
+                        .build());
+            }
         }
     }
 
@@ -66,14 +70,16 @@ public class AskCommandServiceImpl implements AskCommandService {
                 questionRepository.save(updateQuestion);
             } else if(questionUpdateVO.getType().equals("FIXED")) {
                 // 질문 상단 고정
-                User user = userRepository.findByProviderId(questionUpdateVO.getUserId());
-
-                if(questionUpdateVO.getIsActivated()){
-                    user.setTopFixedQuestionId(questionUpdateVO.getQuestionId());
-                } else {
-                    user.setTopFixedQuestionId(null);
+                Optional<User> user = userRepository.findById(questionUpdateVO.getUserId());
+                if(user.isPresent()){
+                    User updateUser = user.get();
+                    if(questionUpdateVO.getIsActivated()){
+                        updateUser.setTopFixedQuestionId(questionUpdateVO.getQuestionId());
+                    } else {
+                        updateUser.setTopFixedQuestionId(null);
+                    }
+                    userRepository.save(updateUser);
                 }
-                userRepository.save(user);
             }
         }
     }

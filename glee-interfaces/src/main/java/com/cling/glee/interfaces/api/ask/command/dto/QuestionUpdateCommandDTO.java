@@ -4,7 +4,7 @@ import com.cling.glee.interfaces.api.common.UserBaseDTO;
 import lombok.Data;
 
 @Data
-public class QuestionUpdateCommandDTO extends UserBaseDTO {
+public class QuestionUpdateCommandDTO {
     private String type;
     /**
      HIDE : 숨기기

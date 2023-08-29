@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/nonmember/question")
+@RequestMapping("/api/question")
 @RequiredArgsConstructor
-public class NonMemberQuestionCommandController {
+public class QuestionCommandController {
 
     private final AskCommandService askCommandService;
 
@@ -20,7 +20,7 @@ public class NonMemberQuestionCommandController {
     @PostMapping("/register")
     public void questionRegister(@RequestBody QuestionCreateCommandDTO questionCreateCommandDTO){
         askCommandService.registerQuestion(QuestionCreateVO.builder()
-                .answerUser(questionCreateCommandDTO.getAnswerUser())
+                .answerUserId(questionCreateCommandDTO.getAnswerUserId())
                 .questionContent(questionCreateCommandDTO.getQuestionContent())
                 .isMember(false)
                 .build());

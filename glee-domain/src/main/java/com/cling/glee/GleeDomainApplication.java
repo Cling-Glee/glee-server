@@ -8,7 +8,7 @@ import org.springframework.cglib.core.Block;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@PropertySource(value = "classpath:application-core-${spring.profiles.active}.yaml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:application-core-${spring.profiles.active}.yml", factory = YamlPropertySourceFactory.class)
 @SpringBootApplication
 @EnableJpaAuditing
 public class GleeDomainApplication {

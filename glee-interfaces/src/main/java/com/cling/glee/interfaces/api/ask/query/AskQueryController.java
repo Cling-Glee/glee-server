@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/member/question")
+@RequestMapping("/api/question")
 public class AskQueryController {
 
 //    @GetMapping("/")

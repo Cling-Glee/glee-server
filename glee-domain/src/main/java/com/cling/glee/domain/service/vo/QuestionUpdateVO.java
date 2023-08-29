@@ -9,5 +9,5 @@ public class QuestionUpdateVO {
     private String type; // HIDE(숨기기), FIXED(상단 고정)
     private Long questionId;
     private Boolean isActivated;
-    private String userId;
+    private Long userId;
 }
