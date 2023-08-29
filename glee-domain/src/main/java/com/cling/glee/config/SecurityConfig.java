@@ -29,11 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    @Autowired
-//    private CustomOAuth2UserService customOAuth2UserService;
-
-//    @Autowired
-//    private JwtSuccessHandler jwtSuccessHandler;
 
 	private final Environment env;
 	private final CorsConfig corsConfig;
@@ -57,15 +52,13 @@ public class SecurityConfig {
 
 		http
 				.authorizeRequests() // URL 별 권한 접근제어 관리 시작점
-				.antMatchers("/login/**", "/oauth2/**").permitAll()
-				.antMatchers("/", "/css/**", "/images/**", "/js/**").permitAll() // 모든 권한에게 공개
-				.antMatchers("/api/**").permitAll()
-				.anyRequest().authenticated() // 나머지 요청은 인증된 사용자(로그인) 에게만 공개
+				.antMatchers("/api/auth/**").authenticated() // /api/auth 엔드포인트는 인증된 사용자에게만 공개
+				.anyRequest().permitAll() // 나머지 요청은 모두 허용
 		;
 
 		http
 				.addFilterBefore(new JwtRequestFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-		
+
 
 		return http.build();
 	}

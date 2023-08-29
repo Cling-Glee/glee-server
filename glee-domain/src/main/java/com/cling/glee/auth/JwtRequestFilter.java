@@ -33,6 +33,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String authorizationHeader = request.getHeader("Authorization");
 
+		// 헤더에 토큰 안 담기는 경우는 그대로 진행
+		// 추후 수정 필요?
+		if (authorizationHeader == null) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			String token = authorizationHeader.substring(7);
 			boolean isValidToken = jwtTokenProvider.validateToken(token);
