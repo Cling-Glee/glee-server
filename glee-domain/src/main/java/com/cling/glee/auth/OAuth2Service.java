@@ -39,7 +39,7 @@ public class OAuth2Service {
 		OAuth2TokenResponse tokenResponse = getToken(code, provider);
 
 //        User user = getUserProfile(providerName, tokenResponse.getAccessToken(), provider);
-		log.info("{}===> oauth accesstoken", tokenResponse.getAccessToken());
+		log.info("{}===> oauth access token", tokenResponse.getAccessToken());
 		Map<String, Object> userAttributes = getUserAttributes(provider, tokenResponse.getAccessToken());
 		OAuth2UserInfo oauth2UserInfo = null;
 		log.info("providerName: {}", providerName);
@@ -72,7 +72,7 @@ public class OAuth2Service {
 		}
 
 		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(createUser.getId()));
-		String refreshToken = jwtTokenProvider.createRefreshToken();
+		String refreshToken = jwtTokenProvider.createRefreshToken(String.valueOf(createUser.getId()));
 
 		createUser.setRefreshToken(refreshToken);
 
@@ -155,5 +155,6 @@ public class OAuth2Service {
 				})
 				.block();
 	}
+
 
 }
