@@ -18,7 +18,7 @@ public class JwtTokenProvider {
 	private final Long accessTokenExpiredTime = 1000 * 60L * 60L * 12L; // 유효시간 12시간 (임시 변경)
 	private final Long refreshTokenExpiredTime = 1000 * 60L * 60L * 24L * 14L; // 유효시간 14일
 
-	private final Long shortAccessTokenExpiredTime = 1000 * 30L; // 유효시간 30초 (만료토큰 테스트용)
+	private final Long shortAccessTokenExpiredTime = 1000 * 60L * 5; // 유효시간 5분 (만료토큰 테스트용)
 
 
 	public String createAccessToken(String payload) {

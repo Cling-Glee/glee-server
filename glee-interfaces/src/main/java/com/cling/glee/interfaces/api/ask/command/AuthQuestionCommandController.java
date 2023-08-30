@@ -6,6 +6,7 @@ import com.cling.glee.domain.service.vo.QuestionUpdateVO;
 import com.cling.glee.interfaces.api.ask.command.dto.QuestionCreateCommandDTO;
 import com.cling.glee.interfaces.api.ask.command.dto.QuestionDeleteCommandDTO;
 import com.cling.glee.interfaces.api.ask.command.dto.QuestionUpdateCommandDTO;
+import com.cling.glee.interfaces.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthQuestionCommandController {
 
 	private final AskCommandService askCommandService;
+	private final AuthUtil authUtil;
 
 	// 질문 등록
 	@PostMapping("/register")
@@ -48,8 +50,7 @@ public class AuthQuestionCommandController {
 	@Operation(summary = "회원 질문 수정")
 	@SecurityRequirement(name = "Authorization")
 	public void questionUpdate(@RequestBody QuestionUpdateCommandDTO questionUpdateCommandDTO) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Long userId = Long.parseLong(authentication.getPrincipal().toString());
+		Long userId = authUtil.getUserId();
 
 		askCommandService.updateQuestion(QuestionUpdateVO.builder()
 				.type(questionUpdateCommandDTO.getType())

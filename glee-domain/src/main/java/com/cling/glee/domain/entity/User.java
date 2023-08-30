@@ -34,8 +34,7 @@ public class User extends BaseTimeEntity {
 	private ProviderType providerType; // KAKAO, TWITTER, INSTAGRAM, APPLE
 
 	private String providerId; // 각 소셜 로그인 서비스에서 제공하는 고유 아이디
-
-	@Column(nullable = false)
+	
 	private String email;
 
 	// 리프레시 토큰

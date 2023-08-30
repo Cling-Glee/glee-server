@@ -1,10 +1,15 @@
 package com.cling.glee.auth;
 
+import com.cling.glee.auth.response.LoginResponse;
+import com.cling.glee.auth.response.OAuth2TokenResponse;
 import com.cling.glee.auth.userinfo.KakaoUserInfo;
 import com.cling.glee.auth.userinfo.OAuth2UserInfo;
 import com.cling.glee.domain.entity.User;
+import com.cling.glee.domain.entity.enums.ProviderType;
 import com.cling.glee.domain.entity.enums.Role;
+import com.cling.glee.domain.entity.redis.UserToken;
 import com.cling.glee.domain.repository.UserRepository;
+import com.cling.glee.domain.repository.UserTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,6 +25,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,6 +37,7 @@ public class OAuth2Service {
 	private final ClientRegistrationRepository clientRegistrationRepository;
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final UserTokenRepository userTokenRepository;
 
 
 	@Transactional
@@ -54,12 +61,12 @@ public class OAuth2Service {
 		}
 
 
-		Optional<User> user = userRepository.findByEmailAndProviderType(oauth2UserInfo.getEmail(), oauth2UserInfo.getProviderType());
+		Optional<User> getUser = userRepository.findByEmailAndProviderType(oauth2UserInfo.getEmail(), oauth2UserInfo.getProviderType());
 
-		User createUser = null;
+		User user = null;
 
-		if (user.isEmpty()) {
-			createUser = userRepository.save(User.builder()
+		if (getUser.isEmpty()) {
+			user = userRepository.save(User.builder()
 					.nickname(oauth2UserInfo.getNickname())
 					.email(oauth2UserInfo.getEmail())
 					.providerId(oauth2UserInfo.getProviderId())
@@ -68,20 +75,30 @@ public class OAuth2Service {
 					.build())
 			;
 		} else {
-			createUser = user.get();
+			user = getUser.get();
 		}
 
-		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(createUser.getId()));
-		String refreshToken = jwtTokenProvider.createRefreshToken(String.valueOf(createUser.getId()));
+		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
+		String refreshToken = jwtTokenProvider.createRefreshToken(String.valueOf(user.getId()));
 
-		createUser.setRefreshToken(refreshToken);
+		user.setRefreshToken(refreshToken);
+
+		// redis 에 토큰 정보들 저장
+		UserToken userToken = new UserToken();
+		userToken.setUserId(user.getId());
+		userToken.setKakaoAccessToken(tokenResponse.getAccessToken());
+		userToken.setKakaoRefreshToken(tokenResponse.getRefreshToken());
+		userToken.setOurRefreshToken(refreshToken);
+
+		userTokenRepository.save(userToken);
+
 
 		return LoginResponse.builder()
-				.id(createUser.getId())
-				.nickname(createUser.getNickname())
-				.email(createUser.getEmail())
+				.id(user.getId())
+				.nickname(user.getNickname())
+				.email(user.getEmail())
 				.accessToken(accessToken)
-				.refreshToken(createUser.getRefreshToken())
+				.refreshToken(user.getRefreshToken())
 				.build();
 
 	}
@@ -153,6 +170,30 @@ public class OAuth2Service {
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
 				})
+				.block();
+	}
+
+	public void logout(String providerName, Long userId) {
+		if (Objects.equals(providerName, ProviderType.kakao.toString())) {
+			kakaoUnlink(userId);
+		}
+	}
+
+	// 카카오계정 연결끊기
+	public void kakaoUnlink(Long userId) {
+
+		// userId 로 redis 에서 토큰 정보 가져오기
+		String kakaoAccessToken = userTokenRepository.findById(userId).get().getKakaoAccessToken();
+
+		WebClient.create()
+				.post()
+				.uri("https://kapi.kakao.com/v1/user/unlink")
+				.headers(header -> {
+					header.setBearerAuth(kakaoAccessToken);
+					header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+				})
+				.retrieve()
+				.bodyToMono(Void.class)
 				.block();
 	}
 
