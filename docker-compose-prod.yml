@@ -1,6 +1,8 @@
-version : "3.7"
+version: "3.7"
 services:
   spring-rest-api:
+    platform: linux/amd64 # 플랫폼 설정
+    image: soul4927/whisper:latest
     container_name: spring-rest-api
     build:
       context: ./glee-interfaces

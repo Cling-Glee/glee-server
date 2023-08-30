@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @PropertySource(ignoreResourceNotFound = true,
 		value = {
-				"classpath:application-core-local.yml",
 				"classpath:application-core-${spring.profiles.active}.yml"
 		}, factory = YamlPropertySourceFactory.class)
 public class GleeDomainApplication {
