@@ -1,5 +1,6 @@
 package com.cling.glee.domain.entity;
 
+import com.cling.glee.domain.entity.base.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Answer {
+public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)

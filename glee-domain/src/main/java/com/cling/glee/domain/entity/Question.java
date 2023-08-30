@@ -1,5 +1,6 @@
 package com.cling.glee.domain.entity;
 
+import com.cling.glee.domain.entity.base.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.CollectionId;
 
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Question {
+public class Question extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,15 +30,18 @@ public class Question {
 	private User answerUser; // 답변한 유저
 
 	@Column(nullable = false, length = 1000)
-	private String questionContent;
+	private String questionContent; // 질문 내용
 
 	@Column(nullable = false)
-	private Boolean isNickNameExposed;
+	private Boolean isNickNameExposed; // 닉네임 공개 여부
 
 	@Column(nullable = false)
-	private Boolean isHided;
+	private Boolean isHided; // 숨김 여부
 
 	@Column(nullable = false)
-	private Boolean isDeleted;
+	private Boolean isDeleted; // 삭제 여부
+
+	@Column(nullable = false)
+	private Boolean isMember; // 회원 여부
 
 }
