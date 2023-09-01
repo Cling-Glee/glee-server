@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CollectionId;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,6 +21,10 @@ public class Question extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Long id;
+
+	@GeneratedValue(generator = "uuid2")
+	@Column(columnDefinition = "BINARY(16)")
+	private UUID uuid; // 질문 UUID
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ask_user_id")

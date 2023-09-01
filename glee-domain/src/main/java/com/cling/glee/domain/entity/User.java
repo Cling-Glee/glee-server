@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -22,6 +23,10 @@ public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue
 	private Long id;
+
+	@GeneratedValue(generator = "uuid2")
+	@Column(columnDefinition = "BINARY(16)")
+	private UUID uuid; // 유저 UUID
 
 	// 닉네임
 	@Column(nullable = false)
