@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Random;
 
 @Component
 @Slf4j
@@ -20,19 +18,19 @@ public class JwtTokenProvider {
 	private final Long accessTokenExpiredTime = 1000 * 60L * 60L * 12L; // 유효시간 12시간 (임시 변경)
 	private final Long refreshTokenExpiredTime = 1000 * 60L * 60L * 24L * 14L; // 유효시간 14일
 
+	private final Long shortAccessTokenExpiredTime = 1000 * 60L * 5; // 유효시간 5분 (만료토큰 테스트용)
+
 
 	public String createAccessToken(String payload) {
-		return createToken(payload, accessTokenExpiredTime);
+		return createJwtToken(payload, shortAccessTokenExpiredTime);
 	}
 
-	public String createRefreshToken() {
-		byte[] array = new byte[7];
-		new Random().nextBytes(array);
-		String generatedString = new String(array, StandardCharsets.UTF_8);
-		return createToken(generatedString, refreshTokenExpiredTime);
+	public String createRefreshToken(String payload) {
+		return createJwtToken(payload, refreshTokenExpiredTime);
 	}
 
-	public String createToken(String payload, long expireLength) {
+
+	public String createJwtToken(String payload, long expireLength) {
 		Claims claims = Jwts.claims().setSubject(payload);
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + expireLength);
@@ -51,23 +49,38 @@ public class JwtTokenProvider {
 					.parseClaimsJws(token)
 					.getBody()
 					.getSubject();
-		} catch (ExpiredJwtException e) {
-			return e.getClaims().getSubject();
 		} catch (JwtException e) {
-			throw new RuntimeException("유효하지 않은 토큰 입니다");
+			throw new JwtException("유효하지 않은 토큰 입니다");
 		}
 	}
 
-	public boolean validateToken(String token) {
+	public void validateToken(String token) throws JwtException {
 		try {
 			Jws<Claims> claimsJws = Jwts.parser()
 					.setSigningKey(secretKey)
 					.parseClaimsJws(token);
-			return !claimsJws.getBody().getExpiration().before(new Date());
-		} catch (JwtException | IllegalArgumentException exception) {
-			return false;
+
+			Date expiration = claimsJws.getBody().getExpiration();
+			Date now = new Date();
+
+			if (expiration.before(now)) {
+				throw new ExpiredJwtException(null, null, "Token expired");
+			}
+		} catch (ExpiredJwtException e) {
+			// 토큰이 만료된 경우 처리
+			log.error("===Token expired: {}===", e.getMessage());
+			throw e;
+		} catch (MalformedJwtException e) {
+			// 토큰 형식이 잘못된 경우 처리
+			log.error("====Malformed token: {}===", e.getMessage());
+			throw e;
+		} catch (JwtException | IllegalArgumentException e) {
+			// 기타 예외 처리
+			log.error("===Invalid token: {}===", e.getMessage());
+			throw e;
 		}
 	}
+
 
 }
 

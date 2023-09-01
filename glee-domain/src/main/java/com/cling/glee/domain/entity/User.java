@@ -32,7 +32,7 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String nickname;
 
-	private int age;
+	private String age; // 범위로 들어오는 경우 있어서 String 으로 설정
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -40,7 +40,6 @@ public class User extends BaseTimeEntity {
 
 	private String providerId; // 각 소셜 로그인 서비스에서 제공하는 고유 아이디
 
-	@Column(nullable = false)
 	private String email;
 
 	// 리프레시 토큰

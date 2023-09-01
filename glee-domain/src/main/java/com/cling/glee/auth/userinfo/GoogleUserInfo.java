@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class GoogleUserInfo implements OAuth2UserInfo {
 
-	@Override
 	public Map<String, Object> getAttributes() {
 		return null;
 	}
@@ -35,4 +34,11 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 	public String getProfileImage() {
 		return null;
 	}
+
+	@Override
+	public String getAge() {
+		return null;
+	}
+
+
 }

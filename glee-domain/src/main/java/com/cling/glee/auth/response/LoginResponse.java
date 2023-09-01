@@ -1,4 +1,4 @@
-package com.cling.glee.auth;
+package com.cling.glee.auth.response;
 
 import lombok.Builder;
 import lombok.Getter;
