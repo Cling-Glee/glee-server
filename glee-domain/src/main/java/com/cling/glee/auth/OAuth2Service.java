@@ -71,6 +71,8 @@ public class OAuth2Service {
 					.email(oauth2UserInfo.getEmail())
 					.providerId(oauth2UserInfo.getProviderId())
 					.providerType(oauth2UserInfo.getProviderType())
+					.profileImage(oauth2UserInfo.getProfileImage())
+					.age(oauth2UserInfo.getAge())
 					.role(Role.USER)
 					.build())
 			;
