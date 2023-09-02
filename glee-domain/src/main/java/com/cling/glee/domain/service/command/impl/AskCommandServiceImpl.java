@@ -42,7 +42,7 @@ public class AskCommandServiceImpl implements AskCommandService {
                             .askUser(questionUser.get())
                             .isNickNameExposed(questionCreateVO.getIsNickNameExposed())
                             .questionContent(questionCreateVO.getQuestionContent())
-                            .isHided(false)
+                            .isHide(false)
                             .isDeleted(false)
                             .isMember(true)
                             .isReject(false)
@@ -55,7 +55,7 @@ public class AskCommandServiceImpl implements AskCommandService {
                         .answerUser(answerUser.get())
                         .isNickNameExposed(questionCreateVO.getIsNickNameExposed())
                         .questionContent(questionCreateVO.getQuestionContent())
-                        .isHided(false)
+                        .isHide(false)
                         .isDeleted(false)
                         .isMember(false)
                         .isReject(false)
@@ -71,7 +71,7 @@ public class AskCommandServiceImpl implements AskCommandService {
         Optional<Question> question = questionRepository.findByUuid(questionHideVO.getQuestionUuid());
         if(user.isPresent() && question.isPresent()){
             Question updateQuestion = question.get();
-            updateQuestion.setIsHided(questionHideVO.getIsActivated());
+            updateQuestion.setIsHide(questionHideVO.getIsActivated());
             questionRepository.save(updateQuestion);
         }
     }

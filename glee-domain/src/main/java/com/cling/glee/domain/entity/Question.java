@@ -34,6 +34,9 @@ public class Question extends BaseTimeEntity {
 	@JoinColumn(name = "answer_user_id")
 	private User answerUser; // 답변한 유저
 
+	@OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
+	private Answer answer;
+
 	@Column(nullable = false, length = 1000)
 	private String questionContent; // 질문 내용
 
@@ -41,7 +44,7 @@ public class Question extends BaseTimeEntity {
 	private Boolean isNickNameExposed; // 닉네임 공개 여부
 
 	@Column(nullable = false)
-	private Boolean isHided; // 숨김 여부
+	private Boolean isHide; // 숨김 여부
 
 	@Column(nullable = false)
 	private Boolean isDeleted; // 삭제 여부

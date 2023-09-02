@@ -17,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/v1/auth/reaction")
 @RequiredArgsConstructor
 public class AuthReactionCommandController {
+
     private final AskCommandService askCommandService;
 
     @PostMapping
@@ -47,7 +48,7 @@ public class AuthReactionCommandController {
                 .build());
     }
 
-    @PatchMapping
+    @DeleteMapping
     @Operation(summary = "공감 삭제")
     @SecurityRequirement(name = "Authorization")
     public void reactionUpdate(@RequestBody ReactionDeleteCommandDTO reactionDeleteCommandDTO){
