@@ -9,7 +9,6 @@ import java.util.UUID;
 public class HideQuestionVO {
     private UUID questionUuid;
     private String questionContent; // 질문 내용
-    private Boolean isCompleted; // 답변 여부
     private String answerContent; // 답변 내용
     private Reaction reaction; // 공감 수
 

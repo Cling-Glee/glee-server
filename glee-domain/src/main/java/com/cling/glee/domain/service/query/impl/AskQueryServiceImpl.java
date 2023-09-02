@@ -96,7 +96,6 @@ public class AskQueryServiceImpl implements AskQueryService {
                 return HideQuestionVO.builder()
                                 .questionUuid(x.getUuid())
                                 .questionContent(x.getQuestionContent())
-                                .isCompleted(x.getIsCompleted())
                                 .answerContent(answerContent)
                                 .reaction(reaction)
                                 .build();
@@ -138,7 +137,6 @@ public class AskQueryServiceImpl implements AskQueryService {
                         return CompleteQuestionVO.builder()
                                 .questionUuid(x.getUuid())
                                 .questionContent(x.getQuestionContent())
-                                .isCompleted(x.getIsCompleted())
                                 .answerContent(answerContent)
                                 .reaction(reaction)
                                 .build();
