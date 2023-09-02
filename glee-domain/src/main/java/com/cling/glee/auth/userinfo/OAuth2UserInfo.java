@@ -2,10 +2,7 @@ package com.cling.glee.auth.userinfo;
 
 import com.cling.glee.domain.entity.enums.ProviderType;
 
-import java.util.Map;
-
 public interface OAuth2UserInfo {
-	Map<String, Object> getAttributes();
 
 	String getProviderId();
 
@@ -16,4 +13,6 @@ public interface OAuth2UserInfo {
 	String getNickname();
 
 	String getProfileImage();
+
+	String getAge();
 }

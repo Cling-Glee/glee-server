@@ -43,13 +43,10 @@ out/
 **/application-core-dev.yml
 **/application-core-prod.yml
 
+**/application.yml
 **/application-local.yml
 **/application-dev.yml
 **/application-prod.yml
-**/application-local.yml
-**/application-core-dev.yml
-**/application-core-prod.yml
-**/application-core-local.yml
 
 ### env
 .env.dev

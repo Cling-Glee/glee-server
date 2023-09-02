@@ -1,4 +1,4 @@
-package com.cling.glee.auth;
+package com.cling.glee.auth.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
