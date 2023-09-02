@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/question")
 @RequiredArgsConstructor
@@ -16,11 +18,11 @@ public class QuestionCommandController {
 
     private final AskCommandService askCommandService;
 
-    // 질문 등록
-    @PostMapping("/register")
+    // 질문 등록 (비회원)
+    @PostMapping
     public void questionRegister(@RequestBody QuestionCreateCommandDTO questionCreateCommandDTO){
         askCommandService.registerQuestion(QuestionCreateVO.builder()
-                .answerUserId(questionCreateCommandDTO.getAnswerUserId())
+                .answerUserUuid(UUID.fromString(questionCreateCommandDTO.getAnswerUserId()))
                 .questionContent(questionCreateCommandDTO.getQuestionContent())
                 .isMember(false)
                 .build());

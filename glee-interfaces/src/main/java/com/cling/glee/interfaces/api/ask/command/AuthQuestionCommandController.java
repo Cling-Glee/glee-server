@@ -1,68 +1,93 @@
 package com.cling.glee.interfaces.api.ask.command;
 
 import com.cling.glee.domain.service.command.AskCommandService;
-import com.cling.glee.domain.service.vo.QuestionCreateVO;
-import com.cling.glee.domain.service.vo.QuestionUpdateVO;
-import com.cling.glee.interfaces.api.ask.command.dto.QuestionCreateCommandDTO;
-import com.cling.glee.interfaces.api.ask.command.dto.QuestionDeleteCommandDTO;
-import com.cling.glee.interfaces.api.ask.command.dto.QuestionUpdateCommandDTO;
+import com.cling.glee.domain.service.vo.*;
+import com.cling.glee.interfaces.api.ask.command.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/auth/question")
+@RequestMapping("/v1/auth/question")
 @RequiredArgsConstructor
 public class AuthQuestionCommandController {
 
     private final AskCommandService askCommandService;
 
-    // 질문 등록
-    @PostMapping("/register")
-    @Operation(summary = "회원 질문 등록")
+    @PostMapping
+    @Operation(summary = "질문 등록")
     @SecurityRequirement(name = "Authorization")
     public void questionRegister(@RequestBody QuestionCreateCommandDTO questionCreateCommandDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(authentication.getPrincipal().toString());
+        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
 
         askCommandService.registerQuestion(QuestionCreateVO.builder()
-                        .questionUserId(userId)
-                        .answerUserId(questionCreateCommandDTO.getAnswerUserId())
+                        .questionUserUuid(userId)
+                        .answerUserUuid(UUID.fromString(questionCreateCommandDTO.getAnswerUserId()))
                         .questionContent(questionCreateCommandDTO.getQuestionContent())
                         .isNickNameExposed(questionCreateCommandDTO.getIsNickNameExposed())
                         .isMember(true)
                 .build());
     }
 
-    // 질문 수정
-    @PostMapping("/update")
-    @Operation(summary = "회원 질문 수정")
-    @SecurityRequirement(name = "Authorization")
-    public void questionUpdate(@RequestBody QuestionUpdateCommandDTO questionUpdateCommandDTO){
+    @PatchMapping("/hide")
+    @Operation(summary = "질문 숨기기")
+    @SecurityRequirement(name="Authorization")
+    public void questionHide(@RequestBody QuestionHideCommandDTO questionHideCommandDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = Long.parseLong(authentication.getPrincipal().toString());
+        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
 
-        askCommandService.updateQuestion(QuestionUpdateVO.builder()
-                        .type(questionUpdateCommandDTO.getType())
-                        .questionId(questionUpdateCommandDTO.getQuestionId())
-                        .isActivated(questionUpdateCommandDTO.getIsActivated())
-                        .userId(userId)
+        askCommandService.hideQuestion(QuestionHideVO.builder()
+                        .questionUuid(UUID.fromString(questionHideCommandDTO.getQuestionId()))
+                        .isActivated(questionHideCommandDTO.getIsActivated())
+                        .userUuid(userId)
                 .build());
     }
 
-    // 질문 삭제
-    @PostMapping("/delete")
-    @Operation(summary = "회원 질문 삭제")
-    @SecurityRequirement(name = "Authorization")
-    public void questionDelete(@RequestBody QuestionDeleteCommandDTO questionDeleteCommandDTO){
+    @PatchMapping("/fixed")
+    @Operation(summary = "질문 상단 고정")
+    @SecurityRequirement(name="Authorization")
+    public void questionFixed(@RequestBody QuestionFixedCommandDTO questionFixedCommandDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
 
+        askCommandService.fixedQuestion(QuestionFixedVO.builder()
+                    .questionUuid(UUID.fromString(questionFixedCommandDTO.getQuestionId()))
+                    .isActivated(questionFixedCommandDTO.getIsActivated())
+                    .userUuid(userId)
+                .build());
     }
 
+    @PatchMapping("/reject")
+    @Operation(summary = "질문 거절")
+    @SecurityRequirement(name="Authorization")
+    public void questionReject(@RequestBody QuestionRejectCommandDTO questionRejectCommandDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+
+        askCommandService.rejectQuestion(QuestionRejectVO.builder()
+                    .questionUuid(UUID.fromString(questionRejectCommandDTO.getQuestionId()))
+                    .isActivated(questionRejectCommandDTO.getIsActivated())
+                    .userUuid(userId)
+                .build());
+    }
+
+    @DeleteMapping
+    @Operation(summary = "질문 삭제")
+    @SecurityRequirement(name="Authorization")
+    public void questionDelete(@RequestBody QuestionDeleteCommandDTO questionDeleteCommandDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+
+        askCommandService.deleteQuestion(QuestionDeleteVO.builder()
+                    .questionUuid(UUID.fromString(questionDeleteCommandDTO.getQuestionId()))
+                    .userUuid(userId)
+                .build());
+    }
 }

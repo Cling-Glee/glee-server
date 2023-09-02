@@ -47,6 +47,12 @@ public class Question extends BaseTimeEntity {
 	private Boolean isDeleted; // 삭제 여부
 
 	@Column(nullable = false)
+	private Boolean isReject; // 거절 여부
+
+	@Column(nullable = false)
+	private Boolean isCompleted; // 답변 여부
+
+	@Column(nullable = false)
 	private Boolean isMember; // 회원 여부
 
 }
