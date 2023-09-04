@@ -74,5 +74,17 @@ public class OAuthCommandController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	// 태그네임 중복체크
+	@GetMapping("/checkTagName/{tagName}")
+	public ResponseEntity<String> checkTagName(@PathVariable String tagName) {
+		boolean isExist = oAuth2Service.checkTagName(tagName);
+
+		if (isExist) {
+			return ResponseEntity.badRequest().body("이미 존재하는 태그네임입니다");
+		} else {
+			return ResponseEntity.ok().body("사용 가능한 태그네임입니다");
+		}
+	}
+
 
 }

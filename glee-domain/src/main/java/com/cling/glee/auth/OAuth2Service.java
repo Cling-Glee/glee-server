@@ -117,6 +117,11 @@ public class OAuth2Service {
 			throw new IllegalArgumentException("이미 회원가입이 완료된 유저입니다.");
 		}
 
+		// 태그네임 중복체크
+		if (checkTagName(userDetailJoinServiceRequestDTO.getTagName())) {
+			throw new IllegalArgumentException("이미 존재하는 태그네임입니다.");
+		}
+
 		user.setTagName(userDetailJoinServiceRequestDTO.getTagName());
 		user.setNickName(userDetailJoinServiceRequestDTO.getNickName());
 		user.setJoinCompleted(true);
@@ -131,6 +136,12 @@ public class OAuth2Service {
 				.isJoinCompleted(user.isJoinCompleted())
 				.build();
 
+	}
+
+	// 태그네임 중복체크
+	// 중복이면 true, 중복이 아니면 false
+	public boolean checkTagName(String tagName) {
+		return userRepository.existsByTagName(tagName);
 	}
 
 

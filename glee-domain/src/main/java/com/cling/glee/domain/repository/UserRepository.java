@@ -14,4 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	// select u from User u where u.email = ?1 and u.providerType = ?2
 	Optional<User> findByEmailAndProviderType(String email, ProviderType providerType);
 
+	// select u from User u where u.tagName = ?1
+	boolean existsByTagName(String tagName);
+
 }
+
