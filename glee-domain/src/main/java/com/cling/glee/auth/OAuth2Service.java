@@ -10,10 +10,13 @@ import com.cling.glee.domain.entity.enums.Role;
 import com.cling.glee.domain.entity.redis.UserToken;
 import com.cling.glee.domain.repository.UserRepository;
 import com.cling.glee.domain.repository.UserTokenRepository;
+import com.cling.glee.domain.service.dto.UserDetailJoinServiceRequestDTO;
+import com.cling.glee.domain.service.dto.UserDetailJoinServiceResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Service;
@@ -24,7 +27,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -47,11 +49,12 @@ public class OAuth2Service {
 
 //        User user = getUserProfile(providerName, tokenResponse.getAccessToken(), provider);
 		log.info("{}===> oauth access token", tokenResponse.getAccessToken());
-		Map<String, Object> userAttributes = getUserAttributes(provider, tokenResponse.getAccessToken());
+
+
 		OAuth2UserInfo oauth2UserInfo = null;
 		log.info("providerName: {}", providerName);
 		if (providerName.equals("kakao")) {
-			oauth2UserInfo = new KakaoUserInfo(userAttributes);
+			oauth2UserInfo = getKakaoUserInfo(provider, tokenResponse.getAccessToken());
 		}
 //		else if (providerName.equals("google")) {
 //			oauth2UserInfo = new GoogleUserInfo(userAttributes);
@@ -67,15 +70,14 @@ public class OAuth2Service {
 
 		if (getUser.isEmpty()) {
 			user = userRepository.save(User.builder()
-					.nickname(oauth2UserInfo.getNickname())
 					.email(oauth2UserInfo.getEmail())
 					.providerId(oauth2UserInfo.getProviderId())
 					.providerType(oauth2UserInfo.getProviderType())
 					.profileImage(oauth2UserInfo.getProfileImage())
 					.age(oauth2UserInfo.getAge())
 					.role(Role.USER)
-					.build())
-			;
+					.isJoinCompleted(false) // 추가정보 받아야 회원가입 완료됨
+					.build());
 		} else {
 			user = getUser.get();
 		}
@@ -83,13 +85,14 @@ public class OAuth2Service {
 		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
 		String refreshToken = jwtTokenProvider.createRefreshToken(String.valueOf(user.getId()));
 
-		user.setRefreshToken(refreshToken);
+		user.setRefreshToken(refreshToken); // 레디스에 저장해놓을거기 때문에 사실 필요없긴함
 
 		// redis 에 토큰 정보들 저장
 		UserToken userToken = new UserToken();
 		userToken.setUserId(user.getId());
-		userToken.setKakaoAccessToken(tokenResponse.getAccessToken());
-		userToken.setKakaoRefreshToken(tokenResponse.getRefreshToken());
+
+		userToken.setProviderAccessToken(tokenResponse.getAccessToken());
+		userToken.setProviderRefreshToken(tokenResponse.getRefreshToken());
 		userToken.setOurRefreshToken(refreshToken);
 
 		userTokenRepository.save(userToken);
@@ -97,13 +100,39 @@ public class OAuth2Service {
 
 		return LoginResponse.builder()
 				.id(user.getId())
-				.nickname(user.getNickname())
+				.nickname(user.getNickName())
 				.email(user.getEmail())
 				.accessToken(accessToken)
 				.refreshToken(user.getRefreshToken())
+				.isJoinCompleted(user.isJoinCompleted())
 				.build();
 
 	}
+
+	@Transactional
+	public UserDetailJoinServiceResponseDTO detailJoin(UserDetailJoinServiceRequestDTO userDetailJoinServiceRequestDTO) {
+		User user = userRepository.findById(userDetailJoinServiceRequestDTO.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+		if (user.isJoinCompleted()) {
+			throw new IllegalArgumentException("이미 회원가입이 완료된 유저입니다.");
+		}
+
+		user.setTagName(userDetailJoinServiceRequestDTO.getTagName());
+		user.setNickName(userDetailJoinServiceRequestDTO.getNickName());
+		user.setJoinCompleted(true);
+
+		return UserDetailJoinServiceResponseDTO.builder()
+				.id(user.getId())
+				.tagName(user.getTagName())
+				.nickName(user.getNickName())
+				.email(user.getEmail())
+				.accessToken(jwtTokenProvider.createAccessToken(String.valueOf(user.getId())))
+				.refreshToken(user.getRefreshToken())
+				.isJoinCompleted(user.isJoinCompleted())
+				.build();
+
+	}
+
 
 	private OAuth2TokenResponse getToken(String code, ClientRegistration provider) {
 
@@ -164,15 +193,17 @@ public class OAuth2Service {
 //        }
 //    }
 
-	private Map<String, Object> getUserAttributes(ClientRegistration provider, String oAuth2AccessToken) {
-		return WebClient.create()
+	private KakaoUserInfo getKakaoUserInfo(ClientRegistration provider, String oAuth2AccessToken) {
+		ResponseEntity<KakaoUserInfo> responseEntity = WebClient.create()
 				.get()
 				.uri(provider.getProviderDetails().getUserInfoEndpoint().getUri())
-				.headers(header -> header.setBearerAuth(oAuth2AccessToken))
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + oAuth2AccessToken)
+				.accept(MediaType.APPLICATION_JSON)
 				.retrieve()
-				.bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
-				})
+				.toEntity(KakaoUserInfo.class) // JSON을 KakaoUserInfo 객체로 매핑
 				.block();
+
+		return Objects.requireNonNull(responseEntity).getBody();
 	}
 
 	public void logout(String providerName, Long userId) {
@@ -185,7 +216,7 @@ public class OAuth2Service {
 	public void kakaoUnlink(Long userId) {
 
 		// userId 로 redis 에서 토큰 정보 가져오기
-		String kakaoAccessToken = userTokenRepository.findById(userId).get().getKakaoAccessToken();
+		String kakaoAccessToken = userTokenRepository.findById(userId).get().getProviderAccessToken();
 
 		WebClient.create()
 				.post()

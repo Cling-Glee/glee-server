@@ -11,8 +11,8 @@ public class UserToken {
 
 	@Id
 	private Long userId;
-	private String kakaoAccessToken;
-	private String kakaoRefreshToken;
-	private String ourRefreshToken;
+	private String providerAccessToken; // provider 에서 제공한 AccessToken
+	private String providerRefreshToken; // provider 에서 제공한 RefreshToken
+	private String ourRefreshToken; // 우리 서버에서 발급한 RefreshToken
 
 }

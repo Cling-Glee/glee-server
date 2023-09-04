@@ -55,6 +55,9 @@ subprojects {
         // redis
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+        // modelmapper
+        implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
+
     }
 }
 

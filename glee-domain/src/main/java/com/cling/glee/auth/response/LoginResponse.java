@@ -12,6 +12,6 @@ public class LoginResponse {
 	private String email;
 	private String accessToken;
 	private String refreshToken;
-//	private Boolean isNew;
+	private Boolean isJoinCompleted;
 }
 

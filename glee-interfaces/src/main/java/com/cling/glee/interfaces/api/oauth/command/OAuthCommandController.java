@@ -2,6 +2,10 @@ package com.cling.glee.interfaces.api.oauth.command;
 
 import com.cling.glee.auth.OAuth2Service;
 import com.cling.glee.auth.response.LoginResponse;
+import com.cling.glee.domain.service.dto.UserDetailJoinServiceRequestDTO;
+import com.cling.glee.domain.service.dto.UserDetailJoinServiceResponseDTO;
+import com.cling.glee.interfaces.api.oauth.command.dto.UserDetailJoinRequestDTO;
+import com.cling.glee.interfaces.api.oauth.command.dto.UserDetailJoinResponseDTO;
 import com.cling.glee.interfaces.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +28,7 @@ public class OAuthCommandController {
 
 	private final OAuth2Service oAuth2Service;
 	private final AuthUtil authUtil;
+	private final ModelMapper modelMapper;
 
 	@Operation(summary = "OAuth2 로그인 후 access token, refresh token 발급")
 	@ApiResponses(value = {
@@ -51,4 +57,22 @@ public class OAuthCommandController {
 		}
 
 	}
+
+	@PostMapping("/auth/join")
+	public ResponseEntity<UserDetailJoinResponseDTO> detailJoin(@RequestBody UserDetailJoinRequestDTO userDetailJoinRequestDTO) {
+
+		// userDetailJoinRequestDTO 를 userDetailJoinServiceRequestDTO 로 바꿔야함
+
+		UserDetailJoinServiceRequestDTO userDetailJoinServiceRequestDTO = modelMapper.map(userDetailJoinRequestDTO, UserDetailJoinServiceRequestDTO.class);
+
+		userDetailJoinServiceRequestDTO.setId(authUtil.getUserId());
+
+		UserDetailJoinServiceResponseDTO userDetailJoinServiceResponseDTO = oAuth2Service.detailJoin(userDetailJoinServiceRequestDTO);
+
+		UserDetailJoinResponseDTO response = modelMapper.map(userDetailJoinServiceResponseDTO, UserDetailJoinResponseDTO.class);
+
+		return ResponseEntity.ok().body(response);
+	}
+
+
 }

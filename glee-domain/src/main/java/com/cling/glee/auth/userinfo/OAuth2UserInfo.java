@@ -10,8 +10,6 @@ public interface OAuth2UserInfo {
 
 	String getEmail();
 
-	String getNickname();
-
 	String getProfileImage();
 
 	String getAge();
