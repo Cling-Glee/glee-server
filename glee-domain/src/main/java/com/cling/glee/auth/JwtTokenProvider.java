@@ -1,15 +1,22 @@
 package com.cling.glee.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenProvider {
+
+	private final ObjectMapper objectMapper;
 
 	@Value("${jwt.secret}")
 	private String secretKey;
@@ -20,36 +27,51 @@ public class JwtTokenProvider {
 
 	private final Long shortAccessTokenExpiredTime = 1000 * 60L * 5;  // 유효시간 5분
 
-
-	public String createAccessToken(String payload) {
+	public String createAccessToken(Map<String, String> payload) {
 		return createJwtToken(payload, shortAccessTokenExpiredTime);
 	}
 
-	public String createRefreshToken(String payload) {
+
+	public String createRefreshToken(Map<String, String> payload) {
 		return createJwtToken(payload, refreshTokenExpiredTime);
 	}
 
+	public String createJwtToken(Map<String, String> payload, long expireLength) {
 
-	public String createJwtToken(String payload, long expireLength) {
-		Claims claims = Jwts.claims().setSubject(payload);
+
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + expireLength);
-		return Jwts.builder()
-				.setClaims(claims)
-				.setIssuedAt(now)
-				.setExpiration(validity)
-				.signWith(SignatureAlgorithm.HS256, secretKey)
-				.compact();
+
+		try {
+			return Jwts.builder()
+					.setClaims(payload)
+					.setIssuedAt(now)
+					.setExpiration(validity)
+					.signWith(SignatureAlgorithm.HS256, secretKey)
+					.compact();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public String getPayload(String token) {
+
+	public Map<String, String> getPayload(String token) {
 		try {
-			return Jwts.parser()
+			Claims claims = Jwts.parser()
 					.setSigningKey(secretKey)
 					.parseClaimsJws(token)
-					.getBody()
-					.getSubject();
+					.getBody();
+
+			// 원하는 클레임 값 추출하여 Map으로 저장
+			Map<String, String> payload = new HashMap<>();
+			payload.put("userId", claims.get("userId", String.class));
+			payload.put("uuid", claims.get("uuid", String.class));
+
+			return payload;
+
 		} catch (JwtException e) {
+			System.err.println("Error Type: " + e.getClass().getName());
+			System.err.println("Error Message: " + e.getMessage());
 			throw new JwtException("유효하지 않은 토큰 입니다");
 		}
 	}

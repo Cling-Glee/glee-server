@@ -23,8 +23,7 @@ public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue
 	private Long id;
-
-	@GeneratedValue(generator = "uuid2")
+	
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID uuid; // 유저 UUID
 

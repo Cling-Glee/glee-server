@@ -58,10 +58,14 @@ public class OAuthCommandController {
 
 	}
 
+	@Operation(summary = "추가 정보 받아서 회원가입")
+	@SecurityRequirement(name = "Authorization") // 인증 필요한 엔드포인트에 설정
 	@PostMapping("/auth/join")
 	public ResponseEntity<UserDetailJoinResponseDTO> detailJoin(@RequestBody UserDetailJoinRequestDTO userDetailJoinRequestDTO) {
 
-		// userDetailJoinRequestDTO 를 userDetailJoinServiceRequestDTO 로 바꿔야함
+//		UUID uuid = authUtil.getUuid();
+//		Long userId = authUtil.getUserId();
+
 
 		UserDetailJoinServiceRequestDTO userDetailJoinServiceRequestDTO = modelMapper.map(userDetailJoinRequestDTO, UserDetailJoinServiceRequestDTO.class);
 

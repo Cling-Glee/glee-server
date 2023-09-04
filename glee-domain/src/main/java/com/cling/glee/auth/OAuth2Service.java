@@ -26,9 +26,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +68,7 @@ public class OAuth2Service {
 
 		if (getUser.isEmpty()) {
 			user = userRepository.save(User.builder()
+					.uuid(UUID.randomUUID())
 					.email(oauth2UserInfo.getEmail())
 					.providerId(oauth2UserInfo.getProviderId())
 					.providerType(oauth2UserInfo.getProviderType())
@@ -82,8 +81,12 @@ public class OAuth2Service {
 			user = getUser.get();
 		}
 
-		String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(user.getId()));
-		String refreshToken = jwtTokenProvider.createRefreshToken(String.valueOf(user.getId()));
+		Map<String, String> payload = new HashMap<>();
+		payload.put("userId", String.valueOf(user.getId()));
+		payload.put("uuid", String.valueOf(user.getUuid()));
+
+		String accessToken = jwtTokenProvider.createAccessToken(payload);
+		String refreshToken = jwtTokenProvider.createRefreshToken(payload);
 
 		user.setRefreshToken(refreshToken); // 레디스에 저장해놓을거기 때문에 사실 필요없긴함
 
@@ -126,13 +129,12 @@ public class OAuth2Service {
 		user.setNickName(userDetailJoinServiceRequestDTO.getNickName());
 		user.setJoinCompleted(true);
 
+
 		return UserDetailJoinServiceResponseDTO.builder()
 				.id(user.getId())
 				.tagName(user.getTagName())
 				.nickName(user.getNickName())
 				.email(user.getEmail())
-				.accessToken(jwtTokenProvider.createAccessToken(String.valueOf(user.getId())))
-				.refreshToken(user.getRefreshToken())
 				.isJoinCompleted(user.isJoinCompleted())
 				.build();
 

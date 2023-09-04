@@ -15,7 +15,5 @@ public class UserDetailJoinResponseDTO {
 	private String nickname;
 	//	private String profileImage; 나중에 s3 연동필요
 	private String email;
-	private String accessToken;
-	private String refreshToken;
 	private boolean isJoinCompleted;
 }
