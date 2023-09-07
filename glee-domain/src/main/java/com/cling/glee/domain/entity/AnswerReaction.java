@@ -1,7 +1,7 @@
 package com.cling.glee.domain.entity;
 
 import com.cling.glee.domain.entity.base.BaseTimeEntity;
-import com.cling.glee.domain.entity.enums.ReactionTypeEnum;
+import com.cling.glee.domain.entity.enums.ReactionType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,12 +18,15 @@ public class AnswerReaction extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="answer_id")
     private Answer answer;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ReactionTypeEnum reactionType;
+    private ReactionType reactionType;
+
+    @Column(nullable = false)
+    private Long userId; // 공감한 유저 아이디
 
 }

@@ -14,9 +14,9 @@ public enum NotificationType {
 
     private String description;
 
-    public static ReactionTypeEnum findByType (String type){
+    public static ReactionType findByType (String type){
         try {
-            return ReactionTypeEnum.valueOf(type);
+            return ReactionType.valueOf(type);
         } catch (IllegalArgumentException iae) {
             return null;
         }

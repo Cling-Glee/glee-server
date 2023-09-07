@@ -4,6 +4,8 @@ import com.cling.glee.domain.entity.base.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,5 +29,8 @@ public class Answer extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Boolean isDeleted;
+
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL)
+    private List<AnswerReaction> answerReactions = new ArrayList<>();
 
 }
