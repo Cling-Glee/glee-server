@@ -74,6 +74,8 @@ public class User extends BaseTimeEntity {
 	@OneToMany(mappedBy = "answerUser", cascade = CascadeType.ALL)
 	private List<Question> answerQuestions = new ArrayList<>(); // 특정 유저가 답변한 질문들
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Survey> surveys = new ArrayList<>();
 
 	/* == 연관관계 편의메서드 == */
 	public void addBlockUser(BlockUser blockUser) {

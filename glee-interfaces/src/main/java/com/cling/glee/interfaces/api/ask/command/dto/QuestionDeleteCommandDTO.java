@@ -4,4 +4,5 @@ import lombok.Data;
 
 @Data
 public class QuestionDeleteCommandDTO {
+    private String questionId; // 질문 UUID
 }

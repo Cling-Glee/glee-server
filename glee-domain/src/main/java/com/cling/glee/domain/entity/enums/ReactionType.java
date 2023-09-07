@@ -5,20 +5,19 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ReactionTypeEnum {
+public enum ReactionType {
     LIKE("좋아요"),
-    LOVE("하트"),
-    HAHA("웃음"),
-    WOW("놀람"),
-    SAD("슬픔"),
-    ANGRY("화남")
-    ;
+    THUMB("엄지"),
+    CHECK("체크"),
+    SMILE("웃음"),
+    SAD("슬픔");
+
 
     private String description;
 
-    public static ReactionTypeEnum findByType (String type){
+    public static ReactionType findByType (String type){
         try {
-            return ReactionTypeEnum.valueOf(type);
+            return ReactionType.valueOf(type);
         } catch (IllegalArgumentException iae) {
             return null;
         }
