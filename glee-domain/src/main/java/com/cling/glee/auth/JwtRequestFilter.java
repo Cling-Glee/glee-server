@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -48,7 +49,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				// 토큰이 유효한 경우에 수행할 작업
 				jwtTokenProvider.validateToken(token);
 
-				String userId = jwtTokenProvider.getPayload(token);
+				Map<String, String> payload = jwtTokenProvider.getPayload(token);
+
+				// userId와 uuid 추출
+				Long userId = Long.valueOf(payload.get("userId"));
+				UUID uuid = UUID.fromString(payload.get("uuid"));
+
+				System.out.println("필터 uuid = " + uuid);
+				System.out.println("필터 userId = " + userId);
 
 
 				// 권한 부여
@@ -57,7 +65,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 
 				// Detail을 넣어줌
-				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				// userId와 uuid를 추가로 넣어줌
+				authenticationToken.setDetails(new CustomAuthenticationDetails(userId, uuid, request));
+
 				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 				log.info("[+] Token in SecurityContextHolder");
 				filterChain.doFilter(request, response);
@@ -66,16 +76,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				// 토큰이 만료된 경우에 수행할 작업
 				// refresh 토큰이 있으면 검증하고 access 토큰 재발급
 				log.info("=====만료된 토큰=====");
+				e.printStackTrace();
 				errorResponse(response, "jwt필터 - 만료된 토큰입니다", HttpServletResponse.SC_UNAUTHORIZED);
 
 			} catch (MalformedJwtException e) {
 				// 토큰 형식이 잘못된 경우에 수행할 작업
 				log.info("=====잘못된 형식의 토큰=====");
+				e.printStackTrace();
 				errorResponse(response, "jwt필터 - 잘못된 형식의 토큰입니다", HttpServletResponse.SC_BAD_REQUEST);
 
 			} catch (JwtException e) {
 				// 기타 예외 처리
 				log.info("=====유효하지 않은 토큰입니다=====");
+				e.printStackTrace();
 				errorResponse(response, "jwt필터 - 유효하지 않은 토큰입니다", HttpServletResponse.SC_FORBIDDEN);
 			}
 

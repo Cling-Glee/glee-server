@@ -24,11 +24,7 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 	public String getEmail() {
 		return null;
 	}
-
-	@Override
-	public String getNickname() {
-		return null;
-	}
+	
 
 	@Override
 	public String getProfileImage() {

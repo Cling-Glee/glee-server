@@ -1,38 +1,53 @@
 package com.cling.glee.auth.userinfo;
 
 import com.cling.glee.domain.entity.enums.ProviderType;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import lombok.ToString;
 
-import java.util.Map;
-
-@Getter
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 public class KakaoUserInfo implements OAuth2UserInfo {
 
-	public Map<String, Object> attributes;
-	public Map<String, Object> properties;
+	public Long id;
+	public String connected_at;
+	public Properties properties;
+	public KakaoAccount kakao_account;
 
-	@JsonCreator
-	public KakaoUserInfo(Map<String, Object> attributes) {
-		this.attributes = attributes;
+	@Data
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public class Properties {
+		public String nickname;
+		public String profile_image;
+		public String thumbnail_image;
 	}
 
-	public Map<String, Object> getKakaoAccount() {
-		return (Map<String, Object>) attributes.get("kakao_account");
-	}
+	@Data
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public class KakaoAccount {
+		public Boolean profile_nickname_needs_agreement;
+		public Boolean profile_image_needs_agreement;
+		public Profile profile;
+		public Boolean has_email;
+		public Boolean email_needs_agreement;
+		public Boolean is_email_valid;
+		public Boolean is_email_verified;
+		public String email;
 
-	public Map<String, Object> getProperties() {
-		return (Map<String, Object>) attributes.get("properties");
-	}
-
-	public Map<String, Object> getProfile() {
-		Map<String, Object> kakaoAccount = getKakaoAccount();
-		return (Map<String, Object>) kakaoAccount.get("profile");
+		@Data
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public class Profile {
+			public String nickname;
+			public String thumbnail_image_url;
+			public String profile_image_url;
+			public Boolean is_default_image;
+		}
 	}
 
 	@Override
 	public String getProviderId() {
-		return String.valueOf(attributes.get("id"));
+		return id.toString();
 	}
 
 	@Override
@@ -42,21 +57,18 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 
 	@Override
 	public String getEmail() {
-		return (String) getKakaoAccount().get("email");
+		return getKakao_account().getEmail();
 	}
 
-	@Override
-	public String getNickname() {
-		return (String) getProperties().get("nickname"); // 카카오 닉네임 : 카카오에서 설정한 이름
-	}
 
 	@Override
 	public String getProfileImage() {
-		return (String) getProfile().get("profile_image_url");
+		return getProperties().getProfile_image();
 	}
 
 	@Override
 	public String getAge() {
-		return (String) getKakaoAccount().get("age_range");
+		return getKakao_account().getProfile().getNickname();
 	}
+
 }

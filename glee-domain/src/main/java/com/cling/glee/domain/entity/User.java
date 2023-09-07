@@ -23,14 +23,18 @@ public class User extends BaseTimeEntity {
 	@Id
 	@GeneratedValue
 	private Long id;
-
-	@GeneratedValue(generator = "uuid2")
+	
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID uuid; // 유저 UUID
 
-	// 닉네임
-	@Column(nullable = false)
-	private String nickname;
+	// 태그네임 (회원가입 시 추가정보)
+	private String tagName;
+
+	// 닉네임 (회원가입 시 추가정보)
+	private String nickName;
+
+	// 프로필 사진 (회원가입 시 추가정보)
+	private String profileImage;
 
 	private String age; // 범위로 들어오는 경우 있어서 String 으로 설정
 
@@ -45,10 +49,7 @@ public class User extends BaseTimeEntity {
 	// 리프레시 토큰
 	private String refreshToken;
 
-	// 프로필 사진
-	private String profileImage;
-
-	// 회원가입 완료 여부 => 필요한가?
+	// 회원가입 완료 여부
 	private boolean isJoinCompleted;
 
 	// 회원탈퇴 여부
@@ -104,8 +105,8 @@ public class User extends BaseTimeEntity {
 	}
 
 	/* == 비즈니스 로직 == */
-	public User update(String nickname, String profileImage) {
-		this.nickname = nickname;
+	public User update(String nickName, String profileImage) {
+		this.nickName = nickName;
 		this.profileImage = profileImage;
 
 		return this;
@@ -114,4 +115,6 @@ public class User extends BaseTimeEntity {
 	public String getRoleKey() {
 		return this.role.getKey();
 	}
+
+
 }
