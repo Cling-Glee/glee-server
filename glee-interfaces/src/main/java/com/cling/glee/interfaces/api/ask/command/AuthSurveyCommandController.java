@@ -3,6 +3,7 @@ package com.cling.glee.interfaces.api.ask.command;
 import com.cling.glee.domain.service.command.SurveyCommandService;
 import com.cling.glee.domain.service.vo.*;
 import com.cling.glee.interfaces.api.ask.command.dto.*;
+import com.cling.glee.interfaces.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +18,18 @@ import java.util.Date;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/auth/survey")
+@RequestMapping("/v1/auth/survey")
 @RequiredArgsConstructor
 public class AuthSurveyCommandController {
 
     private final SurveyCommandService surveyCommandService;
+    private final AuthUtil authUtil;
 
     @PostMapping
     @Operation(summary = "설문 등록")
     @SecurityRequirement(name = "Authorization")
     private void surveyRegister(@RequestBody SurveyCreateCommandDTO surveyCreateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime endTime = LocalDateTime.parse(surveyCreateCommandDTO.getEndTime(), formatter);
@@ -46,8 +47,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 수정")
     @SecurityRequirement(name = "Authorization")
     private void surveyUpdate(@RequestBody SurveyUpdateCommandDTO surveyUpdateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime endTime = null;
@@ -68,8 +68,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 삭제")
     @SecurityRequirement(name = "Authorization")
     private void surveyDelete(@RequestBody SurveyDeleteCommandDTO surveyDeleteCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.deleteSurvey(SurveyDeleteVO.builder()
                         .surveyUuid(UUID.fromString(surveyDeleteCommandDTO.getSurveyId()))
@@ -81,8 +80,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 항목 추가")
     @SecurityRequirement(name = "Authorization")
     private void surveyItemRegister(@RequestBody SurveyItemCreateCommandDTO surveyItemCreateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.registerSurveyItem(SurveyItemCreateVO.builder()
                         .userUuid(userId)
@@ -95,8 +93,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 항목 수정")
     @SecurityRequirement(name = "Authorization")
     private void surveyItemUpdate(@RequestBody SurveyItemUpdateCommandDTO surveyItemUpdateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.updateSurveyItem(SurveyItemUpdateVO.builder()
                         .surveyUuid(UUID.fromString(surveyItemUpdateCommandDTO.getSurveyId()))
@@ -110,8 +107,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 항목 삭제")
     @SecurityRequirement(name = "Authorization")
     private void surveyItemDelete(@RequestBody SurveyItemDeleteCommandDTO surveyItemDeleteCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.deleteSurveyItem(SurveyItemDeleteVO.builder()
                         .surveyUuid(UUID.fromString(surveyItemDeleteCommandDTO.getSurveyId()))
@@ -124,8 +120,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 숨기기")
     @SecurityRequirement(name = "Authorization")
     private void surveyHide(@RequestBody SurveyHideCommandDTO surveyHideCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.hideSurvey(SurveyHideVO.builder()
                         .userUuid(userId)
@@ -137,8 +132,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 종료")
     @SecurityRequirement(name = "Authorization")
     private void surveyEnd(@RequestBody SurveyEndCommandDTO surveyEndCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.endSurvey(SurveyEndVO.builder()
                         .userUuid(userId)
@@ -150,8 +144,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 투표 추가")
     @SecurityRequirement(name = "Authorization")
     private void surveyVoteRegister(@RequestBody SurveyVoteCreateCommandDTO surveyVoteCreateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.registerSurveyVote(SurveyVoteCreateVO.builder()
                         .userUuid(userId)
@@ -164,8 +157,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 투표 수정 (단건 투표 )")
     @SecurityRequirement(name = "Authorization")
     private void surveyVoteUpdate(@RequestBody SurveyVoteUpdateCommandDTO surveyVoteUpdateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.updateSurveyVote(SurveyVoteUpdateVO.builder()
                         .userUuid(userId)
@@ -178,8 +170,7 @@ public class AuthSurveyCommandController {
     @Operation(summary = "설문 투표 삭제")
     @SecurityRequirement(name = "Authorization")
     private void surveyVoteDelete(@RequestBody SurveyVoteDeleteCommandDTO surveyVoteDeleteCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         surveyCommandService.deleteSurveyVote(SurveyVoteDeleteVO.builder()
                         .userUuid(userId)

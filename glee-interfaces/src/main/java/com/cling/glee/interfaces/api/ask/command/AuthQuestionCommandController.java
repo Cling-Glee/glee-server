@@ -3,6 +3,7 @@ package com.cling.glee.interfaces.api.ask.command;
 import com.cling.glee.domain.service.command.AskCommandService;
 import com.cling.glee.domain.service.vo.*;
 import com.cling.glee.interfaces.api.ask.command.dto.*;
+import com.cling.glee.interfaces.util.AuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,13 @@ import java.util.UUID;
 public class AuthQuestionCommandController {
 
     private final AskCommandService askCommandService;
+    private final AuthUtil authUtil;
 
     @PostMapping
     @Operation(summary = "질문 등록")
     @SecurityRequirement(name = "Authorization")
     public void questionRegister(@RequestBody QuestionCreateCommandDTO questionCreateCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         askCommandService.registerQuestion(QuestionCreateVO.builder()
                         .questionUserUuid(userId)
@@ -40,8 +41,7 @@ public class AuthQuestionCommandController {
     @Operation(summary = "질문 숨기기")
     @SecurityRequirement(name="Authorization")
     public void questionHide(@RequestBody QuestionHideCommandDTO questionHideCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         askCommandService.hideQuestion(QuestionHideVO.builder()
                         .questionUuid(UUID.fromString(questionHideCommandDTO.getQuestionId()))
@@ -54,8 +54,7 @@ public class AuthQuestionCommandController {
     @Operation(summary = "질문 상단 고정")
     @SecurityRequirement(name="Authorization")
     public void questionFixed(@RequestBody QuestionFixedCommandDTO questionFixedCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         askCommandService.fixedQuestion(QuestionFixedVO.builder()
                     .questionUuid(UUID.fromString(questionFixedCommandDTO.getQuestionId()))
@@ -68,8 +67,7 @@ public class AuthQuestionCommandController {
     @Operation(summary = "질문 거절")
     @SecurityRequirement(name="Authorization")
     public void questionReject(@RequestBody QuestionRejectCommandDTO questionRejectCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         askCommandService.rejectQuestion(QuestionRejectVO.builder()
                     .questionUuid(UUID.fromString(questionRejectCommandDTO.getQuestionId()))
@@ -82,8 +80,7 @@ public class AuthQuestionCommandController {
     @Operation(summary = "질문 삭제")
     @SecurityRequirement(name="Authorization")
     public void questionDelete(@RequestBody QuestionDeleteCommandDTO questionDeleteCommandDTO){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UUID userId = UUID.fromString(authentication.getPrincipal().toString());
+        UUID userId = authUtil.getUuid();
 
         askCommandService.deleteQuestion(QuestionDeleteVO.builder()
                     .questionUuid(UUID.fromString(questionDeleteCommandDTO.getQuestionId()))
